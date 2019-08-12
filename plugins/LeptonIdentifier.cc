@@ -1,10 +1,10 @@
 // -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 3; -*-
 // vim: set expandtab shiftwidth=3:
 //
-// Package:    ttH-LeptonID
+// Package:    ttH/LeptonIdentifier
 // Class:      LeptonIdentifier
 //
-/**\class LeptonIdentifier LeptonIdentifier.cc ttH-LeptonID/plugins/LeptonIdentifier.cc
+/**\class LeptonIdentifier LeptonIdentifier.cc ttH/LeptonID/plugins/LeptonIdentifier.cc
 
  Description: [one line class summary]
 
@@ -182,7 +182,7 @@ LeptonIdentifier::LeptonIdentifier(const edm::ParameterSet &config)
    ele_reader_->AddVariable("LepGood_mvaIdFall17noIso", &varmvaId);
    mu_reader_->AddVariable("LepGood_segmentCompatibility", &varSegCompat);
 
-   const std::string base = std::string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonID/data";
+   const std::string base = std::string(getenv("CMSSW_BASE")) + "/src/ttH/LeptonID/data";
 
    mu_reader_->BookMVA("BDTG method", base + "/lepMVA_2017_mu_BDTG_weights.xml");
    ele_reader_->BookMVA("BDTG method", base + "/lepMVA_2017_el_BDTG_weights.xml");

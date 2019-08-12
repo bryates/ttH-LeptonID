@@ -1,5 +1,18 @@
 # Lepton ID for Multi-Lepton Analysis
-Include the following configuration in your parameter set:
+
+Installation:
+
+    cmsrel CMSSW_7_6_3
+    cd CMSSW_7_6_3/src
+    cmsenv
+
+    git cms-init
+    git clone git@github.com:cms-ttH/MiniAOD.git
+    git clone git@github.com:cms-ttH/ttH-LeptonID.git ttH/LeptonID
+
+    scram b -j 8
+
+Then include the following configuration in your parameter set:
 
     from RecoJets.Configuration.RecoJets_cff import *
     from RecoJets.Configuration.RecoPFJets_cff import *
