@@ -281,12 +281,9 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
          passesID = passesPreselection;
          break;
       case fakeable:
-         if (mu.userFloat("leptonMVA") >= 0.90)
-         {
+         if (mu.userFloat("leptonMVA") >= 0.90) {
             passesID = passesPreselection and mu.userFloat("nearestJetCsv") < medium_csv_wp;
-         }
-         else
-         {
+         } else {
             passesID = passesPreselection and mu.userFloat("nearestJetCsv") < 0.3 and mu.userFloat("nearestJetPtRatio") > 0.5 and mu.segmentCompatibility() > 0.3;
             passesIso = true;
          }
@@ -338,22 +335,20 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
    // if (ele.pt() <= 10) {
    //    // use HZZ MVA if electron pt less than 10 GeV
    //    passesMVA = eleMvaHZZ > _high[(scEta>=0.8)+(scEta>=1.479)];
-      
-   // }
-   // else {
+   // } else {
    //    // _low below 15 GeV, _high above 25 GeV, interpolation in between
    //    passesMVA = eleMvaGP > _high[(scEta>=0.8)+(scEta>=1.479)];
    // }
    
    //// 2016 ////
-//    if (scEta<1.479) passesMVA = eleMvaHZZ > 0.0;
-//    else passesMVA = eleMvaHZZ > 0.7;
-// 
-   if (fabs(ele.eta())>1.479) passesGPMVA = eleMvaGP>0.357;
-   else
-   {
-        if (fabs(ele.eta())<0.8) passesGPMVA = eleMvaGP>0.837;
-        else  passesGPMVA = eleMvaGP>0.715;
+   // if (scEta<1.479) passesMVA = eleMvaHZZ > 0.0;
+   // else passesMVA = eleMvaHZZ > 0.7;
+
+   if (fabs(ele.eta())>1.479) {
+      passesGPMVA = eleMvaGP>0.357;
+   } else {
+         if (fabs(ele.eta())<0.8) passesGPMVA = eleMvaGP>0.837;
+         else  passesGPMVA = eleMvaGP>0.715;
    }
 
 
@@ -375,16 +370,14 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          fabs(ele.deltaPhiSuperClusterTrackAtVtx()) < 0.04 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() > -0.05 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() < 0.010;
-   }
-   else if (fabs(ele.eta()) < 1.479) {
+   } else if (fabs(ele.eta()) < 1.479) {
       passesCuts = ele.full5x5_sigmaIetaIeta() < 0.011 &&
          ele.hcalOverEcal() < 0.10 &&
          fabs(ele.deltaEtaSuperClusterTrackAtVtx()) < 0.01 &&
          fabs(ele.deltaPhiSuperClusterTrackAtVtx()) < 0.04 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() > -0.05 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() < 0.010;
-   }
-   else if (fabs(ele.eta()) < 2.5) {
+   } else if (fabs(ele.eta()) < 2.5) {
       passesCuts = ele.full5x5_sigmaIetaIeta() < 0.030 &&
          ele.hcalOverEcal() < 0.07 &&
          fabs(ele.deltaEtaSuperClusterTrackAtVtx()) < 0.008 &&
@@ -405,12 +398,9 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          passesID = passesPreselection;
          break;
       case fakeable:
-         if (ele.userFloat("leptonMVA") > 0.90)
-         {
+         if (ele.userFloat("leptonMVA") > 0.90) {
             passesJetCSV = ele.userFloat("nearestJetCsv") < medium_csv_wp;
-         }
-         else
-         {
+         } else {
             passesJetCSV = ele.userFloat("nearestJetCsv") < 0.3 && ele.userFloat("nearestJetPtRatio") > 0.5;
          }
          passesID = passesPreselection and passesCuts and passesJetCSV;
@@ -515,19 +505,19 @@ template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
          
          bool isgoodtrk = false;         
          try {
-             const reco::Track trk = dau_jet.pseudoTrack();
-             const math::XYZPoint vtx_position = lepton.vertex();
+            const reco::Track trk = dau_jet.pseudoTrack();
+            const math::XYZPoint vtx_position = lepton.vertex();
 
-             if(trk.pt()>1 &&
-                trk.hitPattern().numberOfValidHits()>=8 &&
-                trk.hitPattern().numberOfValidPixelHits()>=2 &&
-                trk.normalizedChi2()<5 &&
-                std::fabs(trk.dxy(vtx_position))<0.2 &&
-                std::fabs(trk.dz(vtx_position))<17
-                ) isgoodtrk = true;
+            if(trk.pt()>1 &&
+               trk.hitPattern().numberOfValidHits()>=8 &&
+               trk.hitPattern().numberOfValidPixelHits()>=2 &&
+               trk.normalizedChi2()<5 &&
+               std::fabs(trk.dxy(vtx_position))<0.2 &&
+               std::fabs(trk.dz(vtx_position))<17
+            ) isgoodtrk = true;
 
-             if( dR<=0.4 && dau_jet.charge()!=0 && dau_jet.fromPV()>1 && isgoodtrk) njet_ndau_charged++;
-         } catch(...){}
+            if( dR<=0.4 && dau_jet.charge()!=0 && dau_jet.fromPV()>1 && isgoodtrk) njet_ndau_charged++;
+         } catch(...) {}
       }
 
 
@@ -556,20 +546,12 @@ template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
    lepton.addUserFloat("idPreselection", passes(lepton, preselection));
    lepton.addUserFloat("idTight", passes(lepton, tight));
 
-   if (  (abs(lepton.pdgId()) != 13 || lepton.userFloat("isMediumMuon")) && lepton.userFloat("leptonMVA") > 0.90 )
-      {
-         lepton.addUserFloat("correctedPt", lepton.pt());
-      }
-   else
-      {
-         lepton.addUserFloat("correctedPt", .90 * lepton.pt() / njet_pt_ratio);
-      }
+   if (  (abs(lepton.pdgId()) != 13 || lepton.userFloat("isMediumMuon")) && lepton.userFloat("leptonMVA") > 0.90 ) {
+      lepton.addUserFloat("correctedPt", lepton.pt());
+   } else {
+      lepton.addUserFloat("correctedPt", .90 * lepton.pt() / njet_pt_ratio);
+   }
    
- 
-
-
-
-
    if (lepton.userFloat("idPreselection") > .5) {
       lepton.addUserFloat("idFakeable", passes(lepton, fakeable));
       lepton.addUserFloat("idMVABased", passes(lepton, mvabased));
@@ -651,8 +633,7 @@ LeptonIdentifier::produce(edm::Event &event, const edm::EventSetup &setup)
          continue;
 
       // add members
-      if (mu.innerTrack().isAvailable()) // muonBestTrack
-      {
+      if (mu.innerTrack().isAvailable()) {// muonBestTrack
          mu.addUserFloat("dxy", mu.innerTrack()->dxy(vertex_.position()));
          mu.addUserFloat("dz", mu.innerTrack()->dz(vertex_.position()));
          mu.addUserFloat("numValidPixelHits", mu.innerTrack()->hitPattern().numberOfValidPixelHits());
@@ -754,15 +735,15 @@ LeptonIdentifier::produce(edm::Event &event, const edm::EventSetup &setup)
       if (tau.pt() < tau_minpt_)
          continue;
 
-      //       pat::Jet matchedJet;
-      //       double dR = 666.;
-      //       for (const auto& j: jets_) {
-      // 	double newDR = helper_.DeltaR(&j, &tau);
-      // 	if (newDR < dR) {
-      // 	  dR = newDR;
-      // 	  matchedJet = j;
-      // 	}
-      //       }
+      // pat::Jet matchedJet;
+      // double dR = 666.;
+      // for (const auto& j: jets_) {
+      //    double newDR = helper_.DeltaR(&j, &tau);
+      //    if (newDR < dR) {
+      //       dR = newDR;
+      //       matchedJet = j;
+      //    }
+      // }
 
       float dxy_old = -666.;
       float dz_old = -666.;
