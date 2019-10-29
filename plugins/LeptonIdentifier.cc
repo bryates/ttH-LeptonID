@@ -82,6 +82,7 @@ private:
    Float_t varjetPtRel_in;
    Float_t varjetPtRatio_in;
    Float_t varjetBTagCSV_in;
+   Float_t varjetBTagDF_in;
    Float_t varjetNDauCharged_in;
    Float_t varsip3d;
    Float_t varmvaId;
@@ -111,6 +112,12 @@ private:
    double loose_csv_wp; //= .46;
    double medium_csv_wp; //= .80;
 
+   double loose_deepcsv_wp;
+   double medium_deepcsv_wp;
+
+   double loose_df_wp;
+   double medium_df_wp;
+
    std::string jectag_;
 
    bool hip_safe_;
@@ -133,6 +140,10 @@ LeptonIdentifier::LeptonIdentifier(const edm::ParameterSet &config)
         tau_minpt_(config.getParameter<double>("tauMinPt")),
         loose_csv_wp(config.getParameter<double>("LooseCSVWP")),
         medium_csv_wp(config.getParameter<double>("MediumCSVWP")),
+        loose_deepcsv_wp(config.getParameter<double>("LooseDeepCSVWP")),
+        medium_deepcsv_wp(config.getParameter<double>("MediumDeepCSVWP")),
+        loose_df_wp(config.getParameter<double>("LooseDFWP")),
+        medium_df_wp(config.getParameter<double>("MediumDeepCSVWP")),
         jectag_(config.getParameter<std::string>("JECTag")),
         hip_safe_(config.getParameter<bool>("IsHIPSafe"))
 {
@@ -179,13 +190,30 @@ LeptonIdentifier::LeptonIdentifier(const edm::ParameterSet &config)
       m->AddVariable("LepGood_dz := log(abs(LepGood_dz))", &vardz);
    }
 
+   // for (auto &m: mvas) {
+   //    m->AddVariable("LepGood_pt", &varpt);
+   //    m->AddVariable("LepGood_eta", &vareta);
+   //    m->AddVariable("LepGood_jetNDauChargedMVASel", &varjetNDauCharged_in);
+   //    m->AddVariable("LepGood_miniRelIsoCharged", &varchRelIso);
+   //    m->AddVariable("LepGood_miniRelIsoNeutral", &varneuRelIso);
+   //    m->AddVariable("LepGood_jetPtRelv2", &varjetPtRel_in);
+   //    m->AddVariable("LepGood_jetDF", &varjetBTagDF_in);                // max(LepGood_jetDF,0) --> Need to check this
+   //    m->AddVariable("LepGood_jetPtRatio", &varjetPtRatio_in);          // See above expression
+   //    m->AddVariable("LepGood_dxy", &vardxy);                           // log(abs(LepGood_dxy))
+   //    m->AddVariable("LepGood_sip3d", &varsip3d);
+   //    m->AddVariable("LepGood_dz", &vardz);                             // log(abs(LepGood_dz))
+   // }
+
    ele_reader_->AddVariable("LepGood_mvaIdFall17noIso", &varmvaId);
    mu_reader_->AddVariable("LepGood_segmentCompatibility", &varSegCompat);
 
-   const std::string base = std::string(getenv("CMSSW_BASE")) + "/src/ttH-LeptonID/data";
+   const std::string base = std::string(getenv("CMSSW_BASE")) + "/src/ttH/LeptonID/data";
 
    mu_reader_->BookMVA("BDTG method", base + "/lepMVA_2017_mu_BDTG_weights.xml");
    ele_reader_->BookMVA("BDTG method", base + "/lepMVA_2017_el_BDTG_weights.xml");
+
+   // mu_reader_->BookMVA("BDTG method", base +  "/mu_BDTG_2017_GTv11.weights.xml");
+   // ele_reader_->BookMVA("BDTG method", base + "/el_BDTG_2017_GTv11.weights.xml");
 }
 
 LeptonIdentifier::~LeptonIdentifier()
@@ -208,6 +236,7 @@ LeptonIdentifier::mva(const pat::Muon &mu)
    varjetPtRel_in = mu.userFloat("nearestJetPtRel");
    varjetPtRatio_in = std::min(mu.userFloat("nearestJetPtRatio"), 1.5f);
    varjetBTagCSV_in = std::max(mu.userFloat("nearestJetCsv"), 0.f);
+   varjetBTagDF_in = std::max(mu.userFloat("nearestJetDF",0.f));
    varjetNDauCharged_in = mu.userFloat("nearestJetNDauCharged");
    varsip3d = mu.userFloat("sip3D");
    vardxy = log(fabs(mu.userFloat("dxy")));
@@ -227,6 +256,7 @@ LeptonIdentifier::mva(const pat::Electron &ele)
    varjetPtRel_in = ele.userFloat("nearestJetPtRel");
    varjetPtRatio_in = std::min(ele.userFloat("nearestJetPtRatio"), 1.5f);
    varjetBTagCSV_in = std::max(ele.userFloat("nearestJetCsv"), 0.f);
+   varjetBTagDF_in = std::max(ele.userFloat("nearestJetDF",0.f));
    varjetNDauCharged_in = ele.userFloat("nearestJetNDauCharged");
    varsip3d = ele.userFloat("sip3D");
    vardxy = log(fabs(ele.userFloat("dxy")));
@@ -293,6 +323,7 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
             mu.userFloat("leptonMVA") > 0.90 and
             //mu.userFloat("nearestJetCsv") < medium_csv_wp and           // <---- 
             mu.userFloat("nearestJetDeepCsv") < 0.4941 and
+            // mu.userFloat("nearestJetDF") < medium_df_wp and          // Not sure which disc. to use here
             mu.userFloat("isMediumMuon"); // jetCSV < 0.8484 ? yes (see osTwoLep_cfg.py)
             //isMediumMuon(mu, hip_safe_);
          break;    
@@ -487,6 +518,7 @@ template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
 
    float njet_csv = 0.;
    float njet_deepcsv = 0.;
+   float njet_DFcsv = 0.;
    //float njet_pt_ratio = 1.;
    float njet_pt_ratio = 1./(1. + lepton.userFloat("relIsoR04"));
    float njet_pt_rel = 0.;
@@ -495,6 +527,7 @@ template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
    if (jets_.size() > 0 and dR < .4) {
       njet_csv = matchedJet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
       njet_deepcsv = matchedJet.bDiscriminator("pfDeepCSVJetTags:probb")+matchedJet.bDiscriminator("pfDeepCSVJetTags:probbb");
+      njet_DFcsv = matchedJet.bDiscriminator("pfDeepFlavourJetTags:probbb")+matchedJet.bDiscriminator("pfDeepFlavourJetTags:probb")+matchedJet.bDiscriminator("pfDeepFlavourJetTags:problepb");
       if (njet_csv < 0)
          njet_csv = -10.;
 
@@ -538,6 +571,7 @@ template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
 
    lepton.addUserFloat("nearestJetCsv", njet_csv);
    lepton.addUserFloat("nearestJetDeepCsv", njet_deepcsv);
+   lepton.addUserFloat("nearestJetDF", njet_DFcsv);
    lepton.addUserFloat("nearestJetPtRatio", njet_pt_ratio);
    lepton.addUserFloat("nearestJetPtRel", njet_pt_rel);
    lepton.addUserFloat("nearestJetNDauCharged", njet_ndau_charged);
