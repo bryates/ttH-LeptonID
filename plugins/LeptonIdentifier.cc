@@ -301,7 +301,8 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
             //isMediumMuon(mu, hip_safe_);
          break;    
       case tight:            
-        passesIso = (mu.userFloat("miniIso") < 0.25);
+        passesIso = (mu.userFloat("relIso") < 0.25);
+        //passesIso = (mu.userFloat("miniIso") < 0.25);
         passesID = passesPreselection;
         break;      
       case nonIsolated:
