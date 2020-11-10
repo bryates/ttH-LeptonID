@@ -265,7 +265,8 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
    }
 
    bool passesKinematics = (mu.pt() > minMuonPt) and (fabs(mu.eta()) < maxMuonEta);
-   bool passesIso = (mu.userFloat("miniIso") < 0.4);
+   bool passesIso = (mu.userFloat("relIso") < 0.4);
+   //bool passesIso = (mu.userFloat("miniIso") < 0.4);
    bool passesPreselection = mu.isLooseMuon() && passesMuonBestTrackID;
 
    bool passesID = false;
@@ -323,7 +324,7 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
 
    //bool passesMVA = false;
    bool passesMVA = ele.userFloat("eleMvaLooseIdHZZ"); // 2017
-   bool passesGPMVA = false;
+   //bool passesGPMVA = false;
    double eleMvaGP = ele.userFloat("eleMva");
    double eleMvaHZZ = ele.userFloat("eleMvaHZZ");
    float scEta = ele.userFloat("superClusterEta");
@@ -349,23 +350,27 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
 //    if (scEta<1.479) passesMVA = eleMvaHZZ > 0.0;
 //    else passesMVA = eleMvaHZZ > 0.7;
 // 
+/*
    if (fabs(ele.eta())>1.479) passesGPMVA = eleMvaGP>0.357;
    else
    {
         if (fabs(ele.eta())<0.8) passesGPMVA = eleMvaGP>0.837;
         else  passesGPMVA = eleMvaGP>0.715;
    }
+*/
 
 
    bool passGsfTrackID = false;
    if (ele.gsfTrack().isAvailable())
       passGsfTrackID = fabs(ele.userFloat("dxy")) < 0.05 and fabs(ele.userFloat("dz")) < 0.1 and ele.userFloat("numMissingHits") <= 1;
 
+/*
    float corrected_pt = ele.pt();
    if (ele.userFloat("leptonMVA") < 0.90) {
       corrected_pt = 0.90 * corrected_pt / ele.userFloat("nearestJetPtRatio");
       //passesKinematics = (corrected_pt > minElectronPt) and (fabs(ele.eta()) < 2.5);
    }
+*/
 
    bool passesCuts = false;
    if (fabs(ele.eta()) < 0.8) {
@@ -393,7 +398,8 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() < 0.005;
    }
 
-   bool passesPreselection = passesKinematics and passesIso and passesMVA and passGsfTrackID and ele.userFloat("sip3D") < 8;
+   bool passesPreselection = passesKinematics and passesIso and passGsfTrackID and ele.userFloat("sip3D") < 8;
+   //bool passesPreselection = passesKinematics and passesIso and passesMVA and passGsfTrackID and ele.userFloat("sip3D") < 8;
 
    bool passesID = false;
    bool passesJetCSV = false;
@@ -424,7 +430,7 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          break;
       case tight:
          passesIso = ele.userFloat("miniIso") < 0.25;
-         passesID = passGsfTrackID and ele.userFloat("sip3D")<8 and ele.passConversionVeto() and passesGPMVA;
+         passesID = passesPreselection and ele.userFloat("sip3D")<8 and ele.passConversionVeto() and passesCuts;// and passesGPMVA;
          break;
       case nonIsolated:
          edm::LogError("LeptonID") << "Invalid ID 'nonIsolated' for electrons!";
