@@ -265,7 +265,7 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
    }
 
    bool passesKinematics = (mu.pt() > minMuonPt) and (fabs(mu.eta()) < maxMuonEta);
-   bool passesIso = (mu.userFloat("relIsoR04") < 0.4);
+   bool passesIso = (mu.userFloat("relIso") < 0.4);
    //bool passesIso = (mu.userFloat("miniIso") < 0.4);
    bool passesPreselection = mu.isLooseMuon() && passesMuonBestTrackID;
 
@@ -301,7 +301,7 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
             //isMediumMuon(mu, hip_safe_);
          break;    
       case tight:            
-        passesIso = (mu.userFloat("relIsoR04") < 0.25);
+        passesIso = (mu.userFloat("relIso") < 0.25);
         //passesIso = (mu.userFloat("miniIso") < 0.25);
         passesID = passesPreselection;
         break;      
