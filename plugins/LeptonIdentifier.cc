@@ -267,6 +267,7 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
    bool passesKinematics = (mu.pt() > minMuonPt) and (fabs(mu.eta()) < maxMuonEta);
    bool passesIso = (mu.userFloat("relIso") < 0.4);
    //bool passesIso = (mu.userFloat("miniIso") < 0.4);
+   passesIso = true; //skipping miniIso
    bool passesPreselection = mu.isLooseMuon() && passesMuonBestTrackID;
 
    bool passesID = false;
@@ -303,6 +304,7 @@ LeptonIdentifier::passes(const pat::Muon &mu, ID id)
       case tight:            
         passesIso = (mu.userFloat("relIso") < 0.25);
         //passesIso = (mu.userFloat("miniIso") < 0.25);
+        passesIso = true; //skipping relIso
         passesID = passesPreselection;
         break;      
       case nonIsolated:
@@ -322,6 +324,7 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
    //double minElectronPt = 7.;
    bool passesKinematics = (ele.pt() > minElectronPt) and (fabs(ele.eta()) < 2.5);
    bool passesIso = ele.userFloat("miniIso") < 0.4;
+   passesIso = true; //skipping miniIso
 
    //bool passesMVA = false;
    bool passesMVA = ele.userFloat("eleMvaLooseIdHZZ"); // 2017
@@ -431,6 +434,7 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          break;
       case tight:
          passesIso = ele.userFloat("miniIso") < 0.25;
+         passesIso = true; //skipping miniIso
          passesID = passesPreselection and ele.userFloat("sip3D")<8 and ele.passConversionVeto() and passesCuts;// and passesGPMVA;
          break;
       case nonIsolated:
@@ -687,7 +691,7 @@ LeptonIdentifier::produce(edm::Event &event, const edm::EventSetup &setup)
     
       std::map<std::string, double> miniIso_calculation_params;
 
-      mu.addUserFloat("relIso", helper_.GetMuonRelIso(mu, coneSize::R03, corrType::rhoEA));
+      mu.addUserFloat("relIso", helper_.GetMuonRelIso(mu, coneSize::R03, corrType::deltaBeta));
       mu.addUserFloat("relIsoR04", helper_.GetMuonRelIso(mu, coneSize::R04, corrType::deltaBeta));
       mu.addUserFloat("miniIso", helper_.GetMuonRelIso(mu, coneSize::miniIso, corrType::rhoEA, &miniIso_calculation_params));
       mu.addUserFloat("miniAbsIsoCharged", miniIso_calculation_params["miniAbsIsoCharged"]);
