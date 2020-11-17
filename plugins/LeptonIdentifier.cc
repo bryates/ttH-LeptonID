@@ -378,9 +378,9 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
 
    bool passesCuts = false;
    if (fabs(ele.eta()) < 0.8) {
-      passesCuts = ele.full5x5_sigmaIetaIeta() < 0.011 &&
-         ele.hcalOverEcal() < 0.10;// &&
+      passesCuts = ele.full5x5_sigmaIetaIeta() < 0.011;// &&
          /*
+         ele.hcalOverEcal() < 0.10;// &&
          fabs(ele.deltaEtaSuperClusterTrackAtVtx()) < 0.01 &&
          fabs(ele.deltaPhiSuperClusterTrackAtVtx()) < 0.04 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() > -0.05 &&
@@ -388,9 +388,9 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          */
    }
    else if (fabs(ele.eta()) < 1.479) {
-      passesCuts = ele.full5x5_sigmaIetaIeta() < 0.011 &&
-         ele.hcalOverEcal() < 0.10;// &&
+      passesCuts = ele.full5x5_sigmaIetaIeta() < 0.011;// &&
          /*
+         ele.hcalOverEcal() < 0.10;// &&
          fabs(ele.deltaEtaSuperClusterTrackAtVtx()) < 0.01 &&
          fabs(ele.deltaPhiSuperClusterTrackAtVtx()) < 0.04 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() > -0.05 &&
@@ -398,9 +398,9 @@ LeptonIdentifier::passes(const pat::Electron &ele, ID id)
          */
    }
    else if (fabs(ele.eta()) < 2.5) {
-      passesCuts = ele.full5x5_sigmaIetaIeta() < 0.030 &&
-         ele.hcalOverEcal() < 0.07;// &&
+      passesCuts = ele.full5x5_sigmaIetaIeta() < 0.030;// &&
          /*
+         ele.hcalOverEcal() < 0.07;// &&
          fabs(ele.deltaEtaSuperClusterTrackAtVtx()) < 0.008 &&
          fabs(ele.deltaPhiSuperClusterTrackAtVtx()) < 0.07 &&
          1.0/ele.ecalEnergy() - ele.eSuperClusterOverP()/ele.ecalEnergy() > -0.05 &&
