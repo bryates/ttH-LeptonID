@@ -483,7 +483,7 @@ LeptonIdentifier::passes(const pat::Tau &tau, ID id)
          break;
    }
 
-   return (passesKinematics && passesIso && passesID);
+   return (passesKinematics);// && passesIso && passesID);
 }
 
 template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
