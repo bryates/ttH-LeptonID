@@ -474,6 +474,8 @@ LeptonIdentifier::passes(const pat::Tau &tau, ID id)
       case preselection:
          passesIso = (tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5);
          passesID = (tau.tauID("decayModeFinding") > 0.5) && passesPVassoc;
+         passesIso = true;
+         passesID = true;
          break;
       case selection:
          passesIso = (tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT") > 0.5);
@@ -483,7 +485,7 @@ LeptonIdentifier::passes(const pat::Tau &tau, ID id)
          break;
    }
 
-   return (passesKinematics);// && passesIso && passesID);
+   return (passesKinematics && passesIso && passesID);
 }
 
 template<typename T> void LeptonIdentifier::addCommonUserFloats(T& lepton)
