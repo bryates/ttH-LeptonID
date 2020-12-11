@@ -473,7 +473,11 @@ LeptonIdentifier::passes(const pat::Tau &tau, ID id)
          break;
       case preselection:
          passesIso = (tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT") > 0.5);
-         passesID = (tau.tauID("decayModeFinding") > 0.5) && passesPVassoc;
+         passesIso = tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits") ||
+                   //tau.tauID("byVLooseIsolationMVArun2v1DBoldDMwLT2015") ||
+                   tau.tauID("byVLooseIsolationMVArun2v1DBnewDMwLT") ||
+                   tau.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT");
+         passesID = (tau.tauID("decayModeFinding") > 0.5);// && passesPVassoc;
          passesIso = true;
          passesID = true;
          break;
